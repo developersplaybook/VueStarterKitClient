@@ -197,6 +197,8 @@ onMounted(() => {
       if (divWeather) {
         divWeather.classList.add("delayed-fade-in-animation");
       }
+
+      currentTicks.value = new Date().getTime();
     }, 1000); // 1-second delay after script loading
   };
 
