@@ -132,10 +132,10 @@ export default {
     const fetchPhotos = async (id) => {
       if (id===0) {
         try {
-          const response = await apiClient.getHelper(`${apiAddress.value}/api/details/random`);
+          const response = await apiClient.getHelper(`${apiAddress.value}/api/details/savedphotoid`);
           const randomPhotoId = parseInt(response);
           photoId.value = randomPhotoId;
-          await fetchRandomPhotoDetails();
+          await getAllPhotosFromAlbumWithSavedPhotoId();
         } catch (error) {
           alert('Could not contact server 1' + error);
         }
@@ -149,7 +149,7 @@ export default {
       }
     };
 
-    const fetchRandomPhotoDetails = async () => {
+    const getAllPhotosFromAlbumWithSavedPhotoId = async () => {
       try {
         const response = await apiClient.getHelper(`${apiAddress.value}/api/details/0`);
         photos.value = response;
