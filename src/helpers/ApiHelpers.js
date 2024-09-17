@@ -10,9 +10,9 @@ const defaultHeaders = (token) => ({
 });
 
 
-export const getHelper = async (url, token) => {
+export const getHelper = async (url) => {
   const response = await fetch(url, {
-    headers: defaultHeaders(token),
+    headers: defaultHeaders(),
     method: "GET",
     credentials: 'include'
   });
