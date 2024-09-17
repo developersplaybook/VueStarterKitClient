@@ -1,17 +1,15 @@
 <template>
-  <div v-if="localShowModal" class="modal-container">
-    <!-- Modal Overlay -->
-    <div class="modal-overlay"></div>
-    
-    <!-- Modal Dialog -->
-    <div class="modal-dialog modal-sm">
+  <div v-if="localShowModal" class="modal-overlay">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title h4">Confirm deletion</h5>
+          <div class="modal-title h4">
+            Confirm deletion
+          </div>
         </div>
         <div class="alert alert-danger">
-          {{ message }}
-        </div>
+            {{ message }}
+          </div>
         <div class="modal-body">
           <button @click="handleClose" class="btn btn-secondary">Cancel</button>
           <button @click="confirmModal" class="btn btn-danger">Delete</button>
@@ -47,19 +45,16 @@ export default {
   setup(props) {
     const localShowModal = ref(props.showModal);
 
-    // Watch for prop changes to update localShowModal
     watch(() => props.showModal, (newVal) => {
       localShowModal.value = newVal;
     });
 
-    // Watch for localShowModal changes to call hideModal
     watch(() => localShowModal.value, (newVal) => {
       if (!newVal) {
         props.hideModal();
       }
     });
 
-    // Handle modal close
     const handleClose = () => {
       localShowModal.value = false;
     };
@@ -73,24 +68,20 @@ export default {
 </script>
 
 <style scoped>
-
 .modal-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 100; /* Ensure it covers other content */
+  background: rgba(0, 0, 0, 0.1); /* Lighter opacity for the background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 
 .modal-dialog {
-  position: absolute;
-  top: 40%; 
-  left: inherit;
-  transform: translate(-50%, -50%);
-  z-index: 101; /* Ensure it is above the overlay */
-  width: auto;
-  max-width: 90%;
+  z-index: 10000; /* higher than the overlay */
 }
 </style>
-

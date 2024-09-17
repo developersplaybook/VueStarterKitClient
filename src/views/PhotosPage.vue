@@ -27,24 +27,24 @@
               <table class="view" style="border-collapse: collapse;">
                 <tbody>
                   <tr v-for="(row, rowIndex) in photoRows" :key="rowIndex">
-                    <td v-for="(photo, index) in row" :key="photo.photoID">
-                      <!-- Special case when photoID is 0, only when authorized -->
-                      <div v-if="photo.photoID === 0">
+                    <td v-for="(photo, index) in row" :key="5 * rowIndex + index">
+                      <!-- Calculate newIndex -->
+                      <template v-if="photo.photoID === 0">
                         <text-area-input v-model="dragAndDropPhotoCaption" placeholder="Enter caption"
                           @textChanged="(value) => handlePhotoCaptionChange(value)" />
                         <photo-frame :defaultImage="true">
                           <file-upload-function :albumId="albumId" :caption="dragAndDropPhotoCaption"
                             :onPhotoAdded="handlePhotoAdded" />
                         </photo-frame>
-                      </div>
+                      </template>
 
                       <!-- Default case for regular photos -->
-                      <div v-else>
+                      <template v-else>
                         <div v-if="isAuthorized">
-                          <text-area-input v-model="captions[index]" placeholder="Enter caption"
-                            @textChanged="(value) => handleCaptionChange(value, index)" />
+                          <text-area-input v-model="captions[5 * rowIndex + index]" placeholder="Enter caption"
+                            @textChanged="(value) => handleCaptionChange(value, 5 * rowIndex + index)" />
                         </div>
-                        <div v-else>{{ captions[index] }}</div>
+                        <div v-else>{{ captions[5 * rowIndex + index] }}</div>
 
                         <photo-frame>
                           <div class="fade-in-animation">
@@ -56,21 +56,22 @@
                         </photo-frame>
 
                         <div v-if="isAuthorized">
-                          <a @click="toggleDelete(index)" style="margin-right: 10px;">
+                          <a @click="toggleDelete(5 * rowIndex + index)" style="margin-right: 10px;">
                             <font-awesome-icon icon="trash" size="1x" />
                           </a>
 
                           <!-- Delete Confirmation Modal -->
-                          <delete-confirmation v-if="showDeleteConfirmationModals[index]" :key="index"
-                            :showModal="showDeleteConfirmationModals[index]" :confirmModal="() => handleDelete(index)"
-                            :hideModal="() => toggleDelete(index)"
+                          <delete-confirmation v-if="showDeleteConfirmationModals[5 * rowIndex + index]"
+                            :key="5 * rowIndex + index" :showModal="showDeleteConfirmationModals[5 * rowIndex + index]"
+                            :confirmModal="() => handleDelete(5 * rowIndex + index)"
+                            :hideModal="() => toggleDelete(5 * rowIndex + index)"
                             :message="`Do you want to remove ${photo.caption}?`" />
 
-                          <a @click="handleUpdate(index)" style="margin-left: 10px;">
+                          <a @click="handleUpdate(5 * rowIndex + index)" style="margin-left: 10px;">
                             <font-awesome-icon icon="save" size="1x" />
                           </a>
                         </div>
-                      </div>
+                      </template>
                     </td>
                   </tr>
                 </tbody>
