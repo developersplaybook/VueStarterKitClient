@@ -65,7 +65,7 @@
             <div class="buttonbar buttonbar-bottom">
               <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
                 <div v-for="(photo, index) in photos" :key="photo.photoID" style="display: inline;">
-                  <template v-if="index + 1 !== page">
+                  <template v-if="index + 1 !== indexPlusOne">
                     <router-link :to="getDetailsUrl(photo.photoID)" @click="setDetails($event, photo.photoID)">
                       {{ index + 1 }}
                     </router-link>
@@ -110,7 +110,7 @@ import * as apiClient from '../helpers/ApiHelpers';
 import { useApiAddress } from '../providers/useGlobalState';
 
 export default {
-  name: "DetailsPage",
+  name: "DetailsindexPlusOne",
   components: {
     PhotoFrame
   },
@@ -121,9 +121,12 @@ export default {
 
     const photos = ref([]);
     const photoIdParam = ref(parseInt(route.params.photoId));
-    const albumId = ref(parseInt(route.params.albumId));
-    const albumCaption = ref(route.params.albumCaption);
+    const albumIdParam = ref(parseInt(route.params.albumId));
+    const albumCaptionParam = ref(route.params.albumCaption);
+    
     const photoId = ref(photoIdParam.value);  
+    const albumId = ref(albumIdParam.value);  
+    const albumCaption = ref(albumCaptionParam.value);  
 
     onMounted(async () => {
       await fetchPhotos(photoIdParam.value);
@@ -135,7 +138,7 @@ export default {
           const response = await apiClient.getHelper(`${apiAddress.value}/api/details/savedphotoid`);
           const randomPhotoId = parseInt(response);
           photoId.value = randomPhotoId;
-          await getAllPhotosFromAlbumWithSavedPhotoId();
+          await getAllPhotosInAlbumWithSavedPhotoId();
         } catch (error) {
           alert('Could not contact server 1' + error);
         }
@@ -149,9 +152,18 @@ export default {
       }
     };
 
-    const getAllPhotosFromAlbumWithSavedPhotoId = async () => {
+    const getAllPhotosInAlbumWithSavedPhotoId = async () => {
       try {
         const response = await apiClient.getHelper(`${apiAddress.value}/api/details/0`);
+        if (response.length) {
+          const { albumID } = response[0];
+          albumId.value = albumID;
+
+          const albums = await apiClient.getHelper(`${apiAddress.value}/api/albums`);
+          const album = albums.find(({ albumID: id }) => id === albumID);
+          albumCaption.value = album?.caption || 'No caption available';
+        }
+
         photos.value = response;
       } catch (error) {
         alert('Could not contact server 3' + error);
@@ -160,19 +172,21 @@ export default {
 
 
     const captionToShow = computed(() => {
-      const index = page.value > 0 ? page.value - 1 : 0;
+      const index = indexPlusOne.value > 0 ? indexPlusOne.value - 1 : 0;
       const photo = photos.value[index];
       return photo ? photo.caption || 'No caption available' : 'No caption available';
     });
 
-    const first = computed(() => photos.value[0]?.photoID);
-    const last = computed(() => photos.value[photos.value.length - 1]?.photoID);
-    const page = computed(() => {
+    const indexPlusOne = computed(() => {
       const photo = photos.value.find((p) => p.photoID === photoId.value);
       return photo ? photos.value.indexOf(photo) + 1 : 0;
     });
-    const prev = computed(() => (page.value > 1 ? photos.value[page.value - 2].photoID : first.value));
-    const next = computed(() => (page.value < photos.value.length ? photos.value[page.value].photoID : last.value));
+
+    const first = computed(() => photos.value[0]?.photoID);
+    const last = computed(() => photos.value[photos.value.length - 1]?.photoID);
+
+    const prev = computed(() => (indexPlusOne.value > 1 ? photos.value[indexPlusOne.value - 2].photoID : first.value));
+    const next = computed(() => (indexPlusOne.value < photos.value.length ? photos.value[indexPlusOne.value].photoID : last.value));
 
     const getDetailsUrl = (id) => {
       return `/details/${id}/${albumId.value}/${albumCaption.value}`;
@@ -197,7 +211,7 @@ export default {
       photos,
       getDetailsUrl,
       setDetails,
-      page,
+      indexPlusOne,
       first,
       last,
       prev,
