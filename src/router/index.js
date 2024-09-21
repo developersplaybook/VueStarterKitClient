@@ -28,7 +28,7 @@ const routes = [
     component: PhotosPage,
   },
   {
-    path: "/details/:photoId/:albumId/:albumCaption",
+    path: "/details/:photoId/:albumId",
     name: "Details",
     component: DetailsPage,
   },

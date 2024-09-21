@@ -18,16 +18,16 @@
                   <img id="FormView1_Image1" src="/assets/images/button-gallery.gif" style="border-width: 0px" alt="" />
                 </router-link>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <router-link :to="getDetailsUrl(first)">
+                <router-link :to="getDetailsRoute(first)">
                   <img src="/assets/images/button-first.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsUrl(prev)">
+                <router-link :to="getDetailsRoute(prev)">
                   <img src="/assets/images/button-prev.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsUrl(next)">
+                <router-link :to="getDetailsRoute(next)">
                   <img src="/assets/images/button-next.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsUrl(last)">
+                <router-link :to="getDetailsRoute(last)">
                   <img src="/assets/images/button-last.gif" style="border-width: 0px" alt="" />
                 </router-link>
               </div>
@@ -66,7 +66,7 @@
               <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
                 <div v-for="(photo, index) in photos" :key="photo.photoID" style="display: inline;">
                   <template v-if="index + 1 !== indexPlusOne">
-                    <router-link :to="getDetailsUrl(photo.photoID)" @click="setDetails($event, photo.photoID)">
+                    <router-link :to="getDetailsRoute(photo.photoID)" @click="setDetailsRoute($event, photo.photoID)">
                       {{ index + 1 }}
                     </router-link>
                   </template>
@@ -80,16 +80,16 @@
                   <img id="FormView1_Image1" src="/assets/images/button-gallery.gif" style="border-width: 0px" alt="" />
                 </router-link>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <router-link :to="getDetailsUrl(first)">
+                <router-link :to="getDetailsRoute(first)">
                   <img src="/assets/images/button-first.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsUrl(prev)">
+                <router-link :to="getDetailsRoute(prev)">
                   <img src="/assets/images/button-prev.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsUrl(next)">
+                <router-link :to="getDetailsRoute(next)">
                   <img src="/assets/images/button-next.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsUrl(last)">
+                <router-link :to="getDetailsRoute(last)">
                   <img src="/assets/images/button-last.gif" style="border-width: 0px" alt="" />
                 </router-link>
               </div>                        
@@ -110,7 +110,7 @@ import * as apiClient from '../helpers/ApiHelpers';
 import { useApiAddress } from '../providers/useGlobalState';
 
 export default {
-  name: "DetailsindexPlusOne",
+  name: "DetailsPage",
   components: {
     PhotoFrame
   },
@@ -145,6 +145,15 @@ export default {
       } else {
         try {
           const response = await apiClient.getHelper(`${apiAddress.value}/api/details/${albumId.value}`);
+          if (response.length) {
+            const { albumID } = response[0];
+            albumId.value = albumID;
+
+            const albums = await apiClient.getHelper(`${apiAddress.value}/api/albums`);
+            const album = albums.find(({ albumID: id }) => id === albumID);
+            albumCaption.value = album?.caption || 'No caption available';
+          }
+ 
           photos.value = response;
         } catch (error) {
           alert('Could not contact server 2' + error);
@@ -188,14 +197,14 @@ export default {
     const prev = computed(() => (indexPlusOne.value > 1 ? photos.value[indexPlusOne.value - 2].photoID : first.value));
     const next = computed(() => (indexPlusOne.value < photos.value.length ? photos.value[indexPlusOne.value].photoID : last.value));
 
-    const getDetailsUrl = (id) => {
-      return `/details/${id}/${albumId.value}/${albumCaption.value}`;
+    const getDetailsRoute = (id) => {
+      return `/details/${id}/${albumId.value}`;
     };
 
-    const setDetails = (event, id) => {
+    const setDetailsRoute = (event, id) => {
       event.preventDefault(); // Prevent the default link behavior
       if (typeof id === 'number' && !isNaN(id)) {
-        router.push(getDetailsUrl(id));
+        router.push(getDetailsRoute(id));
       } else {
         console.error('Invalid photoID:', id);
       }
@@ -209,8 +218,8 @@ export default {
 
     return {
       photos,
-      getDetailsUrl,
-      setDetails,
+      getDetailsRoute,
+      setDetailsRoute,
       indexPlusOne,
       first,
       last,
