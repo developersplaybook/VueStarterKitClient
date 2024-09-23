@@ -22,7 +22,7 @@
                         <div class="rotate-animation">
                           <div class="scale-animation">
                             <PhotoFrame>
-                              <router-link :to="detailsRoute">
+                              <router-link :to="photoDetailsRoute">
                                 <img :src="imageUrl" alt="Animated Image"
                                   style="border: 4px solid white; max-height: 100%; max-width: 100%; vertical-align: middle;" />
                               </router-link>
@@ -177,11 +177,11 @@ const { apiAddress } = useApiAddress();
 const currentTicks = ref(new Date().getTime());
 
 // Compute the image URL dynamically
-const imageUrl = computed(() => `${apiAddress.value}/Handler/Index/PhotoID=0/Size=M?${currentTicks.value}`);
-const downloadUrl = computed(() => `${apiAddress.value}/Handler/Download/0/Size=M?${currentTicks.value}`);
+const imageUrl = computed(() => `${apiAddress.value}/RandomHandler/Index/PhotoID=0/Size=M?${currentTicks.value}`);
+const downloadUrl = computed(() => `${apiAddress.value}/RandomHandler/Download/0/Size=M?${currentTicks.value}`);
 
 // Define the details URL using a named route with parameters
-const detailsRoute = computed(() => `/details/0/0`);
+const photoDetailsRoute = computed(() => `/photodetails/0/0`);
 
 // Lifecycle hook to handle mounting behavior
 onMounted(() => {

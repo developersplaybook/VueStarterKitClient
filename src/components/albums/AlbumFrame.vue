@@ -183,7 +183,7 @@ export default {
     const isUpdateOldAlbum = computed(() => isAuthorized.value && !isAddNewAlbum.value);
     const isDisabledForAddAndUpdate = computed(() => (cap.value || '').trim() === '');
     const isDisabledForDelete = computed(() => props.photoCount > 0);
-    const albumImageUrl = `${apiAddress.value}/Handler/Index/AlbumID=${props.albumId}/Size=M?timestamp=${Date.now()}`;
+    const albumImageUrl = `${apiAddress.value}/RandomHandler/Index/AlbumID=${props.albumId}/Size=M?timestamp=${Date.now()}`;
 
     // Return only the necessary items, including props directly
     return {

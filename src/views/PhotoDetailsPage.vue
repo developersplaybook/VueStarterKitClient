@@ -18,16 +18,16 @@
                   <img id="FormView1_Image1" src="/assets/images/button-gallery.gif" style="border-width: 0px" alt="" />
                 </router-link>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <router-link :to="getDetailsRoute(first)">
+                <router-link :to="getPhotoDetailsRoute(first)">
                   <img src="/assets/images/button-first.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsRoute(prev)">
+                <router-link :to="getPhotoDetailsRoute(prev)">
                   <img src="/assets/images/button-prev.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsRoute(next)">
+                <router-link :to="getPhotoDetailsRoute(next)">
                   <img src="/assets/images/button-next.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsRoute(last)">
+                <router-link :to="getPhotoDetailsRoute(last)">
                   <img src="/assets/images/button-last.gif" style="border-width: 0px" alt="" />
                 </router-link>
               </div>
@@ -43,14 +43,14 @@
                       <p>{{ captionToShow }}</p>
                       <photo-frame>
                         <img 
-                          :src="`${apiAddress}/Handler/Index/PhotoID=${photoId}/Size=L`" 
+                          :src="`${apiAddress}/RandomHandler/Index/PhotoID=${photoId}/Size=L`" 
                           class="photo_198" 
                           style="border: 4px solid white; object-fit: contain; min-height: 500px; max-height: 500px; top: 50%; bottom: 50%" 
                           alt="PhotoID" 
                       />
                       </photo-frame>
                       <p>
-                        <a :href="`${apiAddress}/Handler/Download/${photoId}/Size=L`">
+                        <a :href="`${apiAddress}/RandomHandler/Download/${photoId}/Size=L`">
                           <img src="/assets/images/button-download.gif" alt="download this photo" />
                         </a>
                       </p>
@@ -65,8 +65,8 @@
             <div class="buttonbar buttonbar-bottom">
               <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
                 <div v-for="(photo, index) in photos" :key="photo.photoID" style="display: inline;">
-                  <template v-if="index + 1 !== indexPlusOne">
-                    <router-link :to="getDetailsRoute(photo.photoID)" @click="setDetailsRoute($event, photo.photoID)">
+                  <template v-if="index + 1 !== photoNumber">
+                    <router-link :to="getPhotoDetailsRoute(photo.photoID)" @click="setPhotoDetailsRoute($event, photo.photoID)">
                       {{ index + 1 }}
                     </router-link>
                   </template>
@@ -80,16 +80,16 @@
                   <img id="FormView1_Image1" src="/assets/images/button-gallery.gif" style="border-width: 0px" alt="" />
                 </router-link>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <router-link :to="getDetailsRoute(first)">
+                <router-link :to="getPhotoDetailsRoute(first)">
                   <img src="/assets/images/button-first.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsRoute(prev)">
+                <router-link :to="getPhotoDetailsRoute(prev)">
                   <img src="/assets/images/button-prev.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsRoute(next)">
+                <router-link :to="getPhotoDetailsRoute(next)">
                   <img src="/assets/images/button-next.gif" style="border-width: 0px" alt="" />
                 </router-link>
-                <router-link :to="getDetailsRoute(last)">
+                <router-link :to="getPhotoDetailsRoute(last)">
                   <img src="/assets/images/button-last.gif" style="border-width: 0px" alt="" />
                 </router-link>
               </div>                        
@@ -110,7 +110,7 @@ import * as apiClient from '../helpers/ApiHelpers';
 import { useApiAddress } from '../providers/useGlobalState';
 
 export default {
-  name: "DetailsPage",
+  name: "PhotoDetailsPage",
   components: {
     PhotoFrame
   },
@@ -135,7 +135,7 @@ export default {
     const fetchPhotos = async (id) => {
       if (id===0) {
         try {
-          const response = await apiClient.getHelper(`${apiAddress.value}/api/details/savedphotoid`);
+          const response = await apiClient.getHelper(`${apiAddress.value}/api/photodetails/savedphotoid`);
           const randomPhotoId = parseInt(response);
           photoId.value = randomPhotoId;
           await getAllPhotosInAlbumWithSavedPhotoId();
@@ -144,7 +144,7 @@ export default {
         }
       } else {
         try {
-          const response = await apiClient.getHelper(`${apiAddress.value}/api/details/${albumId.value}`);
+          const response = await apiClient.getHelper(`${apiAddress.value}/api/photodetails/${albumId.value}`);
           if (response.length) {
             const { albumID } = response[0];
             albumId.value = albumID;
@@ -163,7 +163,7 @@ export default {
 
     const getAllPhotosInAlbumWithSavedPhotoId = async () => {
       try {
-        const response = await apiClient.getHelper(`${apiAddress.value}/api/details/0`);
+        const response = await apiClient.getHelper(`${apiAddress.value}/api/photodetails/0`);
         if (response.length) {
           const { albumID } = response[0];
           albumId.value = albumID;
@@ -181,12 +181,12 @@ export default {
 
 
     const captionToShow = computed(() => {
-      const index = indexPlusOne.value > 0 ? indexPlusOne.value - 1 : 0;
+      const index = photoNumber.value > 0 ? photoNumber.value - 1 : 0;
       const photo = photos.value[index];
       return photo ? photo.caption || 'No caption available' : 'No caption available';
     });
 
-    const indexPlusOne = computed(() => {
+    const photoNumber = computed(() => {
       const photo = photos.value.find((p) => p.photoID === photoId.value);
       return photo ? photos.value.indexOf(photo) + 1 : 0;
     });
@@ -194,17 +194,17 @@ export default {
     const first = computed(() => photos.value[0]?.photoID);
     const last = computed(() => photos.value[photos.value.length - 1]?.photoID);
 
-    const prev = computed(() => (indexPlusOne.value > 1 ? photos.value[indexPlusOne.value - 2].photoID : first.value));
-    const next = computed(() => (indexPlusOne.value < photos.value.length ? photos.value[indexPlusOne.value].photoID : last.value));
+    const prev = computed(() => (photoNumber.value > 1 ? photos.value[photoNumber.value - 2].photoID : first.value));
+    const next = computed(() => (photoNumber.value < photos.value.length ? photos.value[photoNumber.value].photoID : last.value));
 
-    const getDetailsRoute = (id) => {
-      return `/details/${id}/${albumId.value}`;
+    const getPhotoDetailsRoute = (id) => {
+      return `/photodetails/${id}/${albumId.value}`;
     };
 
-    const setDetailsRoute = (event, id) => {
+    const setPhotoDetailsRoute = (event, id) => {
       event.preventDefault(); // Prevent the default link behavior
       if (typeof id === 'number' && !isNaN(id)) {
-        router.push(getDetailsRoute(id));
+        router.push(getPhotoDetailsRoute(id));
       } else {
         console.error('Invalid photoID:', id);
       }
@@ -218,9 +218,9 @@ export default {
 
     return {
       photos,
-      getDetailsRoute,
-      setDetailsRoute,
-      indexPlusOne,
+      getPhotoDetailsRoute,
+      setPhotoDetailsRoute,
+      photoNumber,
       first,
       last,
       prev,

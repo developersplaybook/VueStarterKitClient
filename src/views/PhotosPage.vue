@@ -48,8 +48,8 @@
 
                         <photo-frame>
                           <div class="fade-in-animation">
-                            <router-link :to="`/details/${photo.photoID}/${albumId}`">
-                              <img :src="`${apiAddress}/Handler/Index/PhotoID=${photo.photoID}/Size=M`" alt=""
+                            <router-link :to="`/photodetails/${photo.photoID}/${albumId}`">
+                              <img :src="`${apiAddress}/RandomHandler/Index/PhotoID=${photo.photoID}/Size=M`" alt=""
                                 style="border: 4px solid white" />
                             </router-link>
                           </div>
