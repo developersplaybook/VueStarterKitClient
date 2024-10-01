@@ -78,6 +78,7 @@ export default {
     const photoCaption = ref(props.caption);
 
     watch(() => props.caption, (newCaption) => {
+      console.log("FileUplaodFunction newCaption:", newCaption)
       photoCaption.value = newCaption;
     });
 

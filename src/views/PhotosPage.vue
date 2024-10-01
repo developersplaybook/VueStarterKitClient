@@ -30,10 +30,16 @@
                     <td v-for="(photo, index) in row" :key="5 * rowIndex + index">
                       <!-- Calculate newIndex -->
                       <template v-if="photo.photoID === 0">
-                        <text-area-input v-model="dragAndDropPhotoCaption" placeholder="Enter caption"
-                          @textChanged="(value) => handlePhotoCaptionChange(value)" />
+                        <TextAreaInput 
+                          v-model="dragAndDropPhotoCaption" 
+                          placeholder="Enter caption"
+                          :hasError="false"
+                          @textChanged="(value) => handleDragAndDropPhotoCaptionChanged(value)" 
+                          />
                         <photo-frame :defaultImage="true">
-                          <file-upload-function :albumId="albumId" :caption="dragAndDropPhotoCaption"
+                          <file-upload-function 
+                            :albumId="albumId" 
+                            :caption="dragAndDropPhotoCaption"
                             :onPhotoAdded="handlePhotoAdded" />
                         </photo-frame>
                       </template>
@@ -41,7 +47,10 @@
                       <!-- Default case for regular photos -->
                       <template v-else>
                         <div v-if="isAuthorized">
-                          <text-area-input v-model="captions[5 * rowIndex + index]" placeholder="Enter caption"
+                          <TextAreaInput 
+                            v-model="captions[5 * rowIndex + index]" 
+                            placeholder="Enter caption"
+                            :hasError ="false"
                             @textChanged="(value) => handleCaptionChange(value, 5 * rowIndex + index)" />
                         </div>
                         <div v-else>{{ captions[5 * rowIndex + index] }}</div>
@@ -142,7 +151,6 @@
    
       // Handle caption change
       const handleCaptionChange = (value, index) => {
-        console.log(JSON.stringify(captions), {value}, {index})
         captions.value[index] = value;
       };
   

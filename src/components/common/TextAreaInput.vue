@@ -1,12 +1,14 @@
 <template>
-  <div style="display: inline;"><strong>{{preText}}&nbsp;</strong>
     <textarea
-      style="text-align: center;"
+    :style="{
+        'text-align': 'center',
+        'border': hasError ? '2px solid red' : '1px solid black',
+        'background-color': hasError ? '#ffe6e6' : 'white'
+      }"
       :value="modelValue"
       :placeholder="placeholder"
       @input="updateValue"
     ></textarea>
-  </div>
 </template>
 
 <script>
@@ -21,14 +23,19 @@ export default {
       type: String,
       default: '' 
     },
-    preText: {
-      type: String,
-      default: '' 
+    hasError: {
+      type: Boolean,
+      default: false 
+    },
+    textChanged: {
+      type: Function,
+      required: false
     }
   },
   methods: {
     updateValue(event) {
-      this.$emit('update:modelValue', event.target.value);
+      const newValue = event.target.value;
+      this.$emit('textChanged', newValue); // Emit the textChanged event
     }
   }
 }
