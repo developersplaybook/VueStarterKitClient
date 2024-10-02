@@ -58,7 +58,7 @@
                         <photo-frame>
                           <div class="fade-in-animation">
                             <router-link :to="`/photodetails/${photo.photoID}/${albumId}`">
-                              <img :src="`${apiAddress}/RandomHandler/Index/PhotoID=${photo.photoID}/Size=M`" alt=""
+                              <img :src="imageUrl(photo)" alt=""
                                 style="border: 4px solid white" />
                             </router-link>
                           </div>
@@ -119,9 +119,13 @@
       const { isAuthorized } = useIsAuthorized();
       const { token } = useToken();
       const { loading, setLoading } = useLoading();
-   
+
       // Reactive states
       const opacity = computed(() => (loading.value ? 1 : 0));
+      const imageUrl = (photo) => {
+        return `${apiAddress.value}/RandomHandler/Index/PhotoID=${photo.photoID}/Size=M`;
+      };
+
 
       // Local state
       const route = useRoute();
@@ -221,7 +225,8 @@
         photoRows,
         apiAddress,
         isAuthorized,
-        opacity
+        opacity,
+        imageUrl
       };
     }
   };

@@ -18,12 +18,10 @@ handleAdd<template>
                 <tr v-for="(row, index) in albumRows" :key="index">
                   <td v-for="(album, idx) in row" :key="album.albumID">
                     <album-frame :album-id="album.albumID" :photo-count="album.photoCount" :caption="album.caption"
-                      :item-count="idx" :delete="handleDelete"
-                      :update="(caption) => handleUpdateAlbum(album.albumID, caption)"
-                      :add="(caption) => handleAddAlbum(album.albumID, caption)"
-                      :hasError="!!errorStates[album.albumID]" 
-                      :onCaptionChange="(newCaption) => handleCaptionChange(album.albumID, newCaption)"
-                      />
+                      :item-count="idx" :delete="() => handleDelete(album.albumID)"
+                      :update="(caption) => handleUpdate(album.albumID, caption)"
+                      :add="(caption) => handleAdd(album.albumID, caption)" :hasError="!!errorStates[album.albumID]"
+                      :onCaptionChange="(newCaption) => handleCaptionChange(album.albumID, newCaption)" />
                   </td>
                 </tr>
               </tbody>
@@ -50,52 +48,36 @@ export default {
   },
   setup() {
     // Using hooks
+    const albums = ref([]);
+    const setAlbums = (newAlbums) => {
+      albums.value = newAlbums;
+    }
+
     const { apiAddress } = useApiAddress();
     const { isAuthorized } = useIsAuthorized();
     const { token } = useToken();
     const { loading, setLoading } = useLoading();
     const errorStates = reactive({}); // Object to manage error state for each album
 
+    // Lifecycle hooks
+    onMounted(() => {
+      getAlbumsWithPhotoCount();
+    });
+
+    const initializeErrorStates = (albumsArray) => {
+      albumsArray.forEach(album => {
+        setErrorStates(album.albumID, false);
+      });
+    };
+
     // Function to set error states
     const setErrorStates = (albumId, hasError) => {
       errorStates[albumId] = hasError;
     };
 
-    const handleAddAlbum = async (albumID, caption) => {
-      try {
-        setErrorStates(albumID, false);  
 
-        await handleAdd(albumID, caption);
-
-      } catch (error) {
-        // If there's an error, set error state for the caption
-        setErrorStates(albumID, true);  
-      }
-    };
-
-    const handleUpdateAlbum = async (albumID, caption) => {
-      try {
-        setErrorStates(albumID, false);  
-
-        await handleUpdate(albumID, caption);
-
-      } catch (error) {
-        // If there's an error, set error state for the caption
-        setErrorStates(albumID, true);  
-      }
-    };
-
-
-    // Reactive states
-    const opacity = computed(() => (loading.value ? 1 : 0));
-
-    const albums = ref([]);
-    const setAlbums = (newAlbums) => {
-      albums.value = newAlbums;
-    }
-
-    const handleCaptionChange = (albumID) => {
-      setErrorStates(albumID, false);  
+    const noEmptyAlbumsExists = (albums) => {
+      return albums.every(album => album.photoCount > 0);
     };
 
     // Function to fetch albums
@@ -117,30 +99,6 @@ export default {
       }
     };
 
-    const initializeErrorStates = (albumsArray) => {
-      albumsArray.forEach(album => {
-        setErrorStates(album.albumID, false);
-      });
-
-    };
-
-    const noEmptyAlbumsExists = (albums) => {
-      return albums.every(album => album.photoCount > 0);
-    };
-
-    const handleUpdate = async (albumId, newCaption) => {
-      try {
-        setLoading(true);
-        await apiClient.putHelper(`${apiAddress.value}/api/albums/update/${albumId}`, newCaption, token.value);
-        getAlbumsWithPhotoCount(); // Refresh albums after update
-      } catch (error) {
-        console.error('Update failed:', error);
-        setErrorStates(albumID, true);  
-      } finally {
-        setLoading(false);
-      }
-    };
-
     const handleDelete = async (albumID) => {
       try {
         setLoading(true);
@@ -153,6 +111,19 @@ export default {
       }
     };
 
+    const handleUpdate = async (albumId, newCaption) => {
+      try {
+        setLoading(true);
+        await apiClient.putHelper(`${apiAddress.value}/api/albums/update/${albumId}`, newCaption, token.value);
+        getAlbumsWithPhotoCount(); // Refresh albums after update
+      } catch (error) {
+        console.error('Update failed:', error);
+        setErrorStates(albumID, true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const handleAdd = async (albumId, newCaption) => {
       try {
         setLoading(true);
@@ -160,7 +131,7 @@ export default {
         getAlbumsWithPhotoCount(); // Refresh albums after addition
       } catch (error) {
         console.error('Add failed:', error);
-        setErrorStates(albumID, true);  
+        setErrorStates(albumId, true);
       } finally {
         setLoading(false);
       }
@@ -177,16 +148,17 @@ export default {
     // Reactive computed property for album rows
     const albumRows = computed(() => getAlbumRows());
 
-    // Lifecycle hooks
-    onMounted(() => {
-      getAlbumsWithPhotoCount();
-    });
+    const opacity = computed(() => (loading.value ? 1 : 0));
+
+    const handleCaptionChange = (albumID) => {
+      setErrorStates(albumID, false);
+    };
 
     return {
       opacity,
-      handleUpdateAlbum,
+      handleUpdate,
       handleDelete,
-      handleAddAlbum,
+      handleAdd,
       albumRows,
       errorStates,
       handleCaptionChange
