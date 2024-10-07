@@ -1,24 +1,2 @@
-# vue_starterkit
-
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# VueStarterkitClient
+Please refer to "The Aspiring Full Stack Developer's Playbook: From AI to Microservices and Kubernetes"
