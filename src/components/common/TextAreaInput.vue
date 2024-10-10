@@ -1,5 +1,6 @@
 <template>
     <textarea
+    spellcheck="false"
     :style="{
         'text-align': 'center',
         'border': hasError ? '2px solid red' : '1px solid black',
