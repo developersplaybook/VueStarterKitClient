@@ -51,7 +51,7 @@
               </div>
               <div v-else>
                 <div v-if="albumId && cap && apiAddress">
-                  <router-link :to="`/photos/${albumId}/${cap}`">
+                  <router-link :to="`/photos/${albumId}`">
                     <img :src="albumImageUrl" class="photo_198" style="border: '4px solid white'; max-height: 100%; max-width: 100%" alt="Sample Photo" />
                   </router-link>
                 </div>
@@ -91,7 +91,7 @@
     </h4>
 
     <h4 v-if="!isUpdateOldAlbum && !isAddNewAlbum">
-      <router-link :to="`/photos/${albumId}/${cap}`">{{ cap }}</router-link>
+      <router-link :to="`/photos/${albumId}`">{{ cap }}</router-link>
     </h4>
 
     <h4 v-if="isAddNewAlbum">

@@ -5,7 +5,7 @@
             <div class="col-md-3 hidden-md hidden-sm hidden-xs col-md-height col-md-top custom-vertical-left-border custom-vertical-right-border grey-background">
                 <div class="row">
                     <div class="col-md-12">
-              <h4>{{ albumCaption || '-' }}</h4>
+              <h4>{{ albumCaption }}</h4>
             </div>
           </div>
         </div>
@@ -120,16 +120,13 @@ export default {
     const { apiAddress } = useApiAddress();
 
     const photos = ref([]);
-    const photoIdParam = ref(parseInt(route.params.photoId));
-    const albumIdParam = ref(parseInt(route.params.albumId));
-    const albumCaptionParam = ref(route.params.albumCaption);
+    const photoId = ref(parseInt(route.params.photoId));
     
-    const photoId = ref(photoIdParam.value);  
-    const albumId = ref(albumIdParam.value);  
-    const albumCaption = ref(albumCaptionParam.value);  
+    const albumId = ref(0);  
+    const albumCaption = ref('');  
 
     onMounted(async () => {
-      await fetchPhotos(photoIdParam.value);
+      await fetchPhotos(photoId.value);
     });
 
     const fetchPhotos = async (id) => {
@@ -137,45 +134,26 @@ export default {
         try {
           const response = await apiClient.getHelper(`${apiAddress.value}/api/photodetails/savedphotoid`);
           const randomPhotoId = parseInt(response);
-          photoId.value = randomPhotoId;
-          await getAllPhotosInAlbumWithSavedPhotoId();
+          await getAllPhotosInAlbumByPhotoId(randomPhotoId);
         } catch (error) {
           alert('Could not contact server 1' + error);
         }
       } else {
-        try {
-          const response = await apiClient.getHelper(`${apiAddress.value}/api/photodetails/${albumId.value}`);
-          if (response.length) {
-            const { albumID } = response[0];
-            albumId.value = albumID;
-
-            const albums = await apiClient.getHelper(`${apiAddress.value}/api/albums`);
-            const album = albums.find(({ albumID: id }) => id === albumID);
-            albumCaption.value = album?.caption || 'No caption available';
-          }
- 
-          photos.value = response;
-        } catch (error) {
-          alert('Could not contact server 2' + error);
-        }
+        await getAllPhotosInAlbumByPhotoId(id);
       }
     };
 
-    const getAllPhotosInAlbumWithSavedPhotoId = async () => {
+    const getAllPhotosInAlbumByPhotoId = async (id) => {
       try {
-        const response = await apiClient.getHelper(`${apiAddress.value}/api/photodetails/0`);
-        if (response.length) {
-          const { albumID } = response[0];
-          albumId.value = albumID;
+        photoId.value = id;
+        const photo = await apiClient.getHelper(`${apiAddress.value}/api/photodetails/${id}`);
+        albumId.value = photo.albumID;
+        albumCaption.value = photo.albumCaption || 'No caption available';
 
-          const albums = await apiClient.getHelper(`${apiAddress.value}/api/albums`);
-          const album = albums.find(({ albumID: id }) => id === albumID);
-          albumCaption.value = album?.caption || 'No caption available';
-        }
-
-        photos.value = response;
+        const photoList = await apiClient.getHelper(`${apiAddress.value}/api/photos/album/${albumId.value}`);
+        photos.value = photoList;
       } catch (error) {
-        alert('Could not contact server 3' + error);
+        alert('Could not contact server 3' + JSON.stringify(error));
       }
     };
 
@@ -198,7 +176,7 @@ export default {
     const next = computed(() => (photoNumber.value < photos.value.length ? photos.value[photoNumber.value].photoID : last.value));
 
     const getPhotoDetailsRoute = (id) => {
-      return `/photodetails/${id}/${albumId.value}`;
+      return `/photodetails/${id}`;
     };
 
     const setPhotoDetailsRoute = (event, id) => {

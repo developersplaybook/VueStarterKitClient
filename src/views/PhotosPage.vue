@@ -57,7 +57,7 @@
 
                         <photo-frame>
                           <div class="fade-in-animation">
-                            <router-link :to="`/photodetails/${photo.photoID}/${albumId}`">
+                            <router-link :to="`/photodetails/${photo.photoID}`">
                               <img :src="imageUrl(photo)" alt=""
                                 style="border: 4px solid white" />
                             </router-link>
@@ -130,7 +130,7 @@
       // Local state
       const route = useRoute();
       const albumId = ref(parseInt(route.params.albumId));
-      const albumCaption = route.params.albumCaption;
+      const albumCaption = ref('');;
       const photos = ref([]);
       const captions = ref([]);
       const showDeleteConfirmationModals = ref([]);
@@ -140,14 +140,22 @@
       // Fetch photos on mount
       const fetchPhotos = async () => {
         setLoading(true);
-        let response = await apiClient.getHelper(`${apiAddress.value}/api/photos/album/${albumId.value}`);
-        if (isAuthorized.value) {
-          response = addDefaultImage(response)
-        }
+        const response = await apiClient.getHelper(`${apiAddress.value}/api/photos/album/${albumId.value}`);
+
         photos.value = response;
         captions.value = response.map(p => p.caption);
+
+        if (response.length > 0) {
+          albumCaption.value = response[0]?.albumCaption ?? 'No album caption available';
+        } else {
+          if (albumId.value > 0) {
+            const album = await apiClient.getHelper(`${apiAddress.value}/api/albums/${albumId.value}`);
+            albumCaption.value = album.caption;
+          }
+        }
+
         showDeleteConfirmationModals.value = response.map(() => false);
- 
+
         setLoading(false);
       };
   
@@ -202,11 +210,6 @@
         return rows;
       });
 
-      const addDefaultImage = (responsePhotos) => {
-          const emptyPhoto = { "photoID": 0, "albumID": `${albumId.value}`, "caption": "" };
-          responsePhotos = [...responsePhotos, emptyPhoto];
-          return responsePhotos;
-      };
   
       return {
         albumId,

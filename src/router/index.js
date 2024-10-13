@@ -23,12 +23,12 @@ const routes = [
     component: AlbumsPage,
   },
   {
-    path: "/photos/:albumId/:albumCaption",
+    path: "/photos/:albumId",
     name: "Photos",
     component: PhotosPage,
   },
   {
-    path: "/photodetails/:photoId/:albumId",
+    path: "/photodetails/:photoId",
     name: "Details",
     component: PhotoDetailsPage,
   },

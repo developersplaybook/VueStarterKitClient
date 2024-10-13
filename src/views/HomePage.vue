@@ -181,7 +181,7 @@ const imageUrl = computed(() => `${apiAddress.value}/RandomHandler/Index/PhotoID
 const downloadUrl = computed(() => `${apiAddress.value}/RandomHandler/Download/0/Size=M?${currentTicks.value}`);
 
 // Define the details URL using a named route with parameters
-const photoDetailsRoute = computed(() => `/photodetails/0/0`);
+const photoDetailsRoute = computed(() => `/photodetails/0`);
 
 // Lifecycle hook to handle mounting behavior
 onMounted(() => {
