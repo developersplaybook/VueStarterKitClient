@@ -104,7 +104,7 @@
 
 <script>
 import PhotoFrame from '../photos/PhotoFrame.vue';
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import * as apiClient from '../helpers/ApiHelpers';
 import { useApiAddress } from '../providers/useGlobalState';
@@ -121,52 +121,46 @@ export default {
 
     const photos = ref([]);
     const photoId = ref(parseInt(route.params.photoId));
-    
-    const albumId = ref(0);  
     const albumCaption = ref('');  
 
-    onMounted(async () => {
-      await fetchPhotos(photoId.value);
-    });
-
+    // Function to fetch photos
     const fetchPhotos = async (id) => {
-      if (id===0) {
+      if (id === 0) {
         try {
           const response = await apiClient.getHelper(`${apiAddress.value}/api/photodetails/savedphotoid`);
           const randomPhotoId = parseInt(response);
           await getAllPhotosInAlbumByPhotoId(randomPhotoId);
         } catch (error) {
-          alert('Could not contact server 1' + error);
+          alert('Could not contact server: ' + error);
         }
       } else {
         await getAllPhotosInAlbumByPhotoId(id);
       }
     };
 
+    // Fetch all photos in the album by photoId
     const getAllPhotosInAlbumByPhotoId = async (id) => {
       try {
-        photoId.value = id;
         const photo = await apiClient.getHelper(`${apiAddress.value}/api/photodetails/${id}`);
-        albumId.value = photo.albumID;
         albumCaption.value = photo.albumCaption || 'No caption available';
 
-        const photoList = await apiClient.getHelper(`${apiAddress.value}/api/photos/album/${albumId.value}`);
+        const photoList = await apiClient.getHelper(`${apiAddress.value}/api/photos/album/${photo.albumID}`);
         photos.value = photoList;
       } catch (error) {
-        alert('Could not contact server 3' + JSON.stringify(error));
+        alert('Could not contact server: ' + JSON.stringify(error));
       }
     };
 
+    // Computed properties
+    const photoNumber = computed(() => {
+      const photo = photos.value.find((p) => p.photoID === photoId.value);
+      return photo ? photos.value.indexOf(photo) + 1 : 0;
+    });
 
     const captionToShow = computed(() => {
       const index = photoNumber.value > 0 ? photoNumber.value - 1 : 0;
       const photo = photos.value[index];
       return photo ? photo.caption || 'No caption available' : 'No caption available';
-    });
-
-    const photoNumber = computed(() => {
-      const photo = photos.value.find((p) => p.photoID === photoId.value);
-      return photo ? photos.value.indexOf(photo) + 1 : 0;
     });
 
     const first = computed(() => photos.value[0]?.photoID);
@@ -188,11 +182,18 @@ export default {
       }
     };
 
-
-    watch(() => route.params.photoId, async (newPhotoId) => {
-      photoId.value = parseInt(newPhotoId);
-      await fetchPhotos(newPhotoId);
-    });
+    // Watch for changes in route.params.photoId
+    watch(
+      () => route.params.photoId,
+      async (newPhotoId) => {
+        const parsedId = parseInt(newPhotoId);
+        if (!isNaN(parsedId)) {
+          photoId.value = parsedId;
+          await fetchPhotos(parsedId);
+        }
+      },
+      { immediate: true } // Trigger immediately on component mount
+    );
 
     return {
       photos,
@@ -210,8 +211,9 @@ export default {
     };
   }
 };
-
 </script>
+
+
 
 
 <style scoped>
