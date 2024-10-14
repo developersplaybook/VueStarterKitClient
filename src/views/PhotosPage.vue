@@ -26,20 +26,22 @@
             <div class="col-md-12">
               <table class="view" style="border-collapse: collapse;">
                 <tbody>
+                  <!-- Check if photoRows is empty -->
+                  <tr v-if="!isAuthorized && photoRows.length === 0">
+                    <td>
+                      <h4>Album empty</h4>
+                    </td>
+                  </tr>
+
+                  <!-- Display rows if photoRows is not empty -->
                   <tr v-for="(row, rowIndex) in photoRows" :key="rowIndex">
                     <td v-for="(photo, index) in row" :key="5 * rowIndex + index">
                       <!-- Calculate newIndex -->
                       <template v-if="photo.photoID === 0">
-                        <TextAreaInput 
-                          v-model="dragAndDropPhotoCaption" 
-                          placeholder="Enter caption"
-                          :hasError="false"
-                          @textChanged="(value) => handleDragAndDropPhotoCaptionChanged(value)" 
-                          />
+                        <TextAreaInput v-model="dragAndDropPhotoCaption" placeholder="Enter caption" :hasError="false"
+                          @textChanged="(value) => handleDragAndDropPhotoCaptionChanged(value)" />
                         <photo-frame :defaultImage="true">
-                          <file-upload-function 
-                            :albumId="albumId" 
-                            :caption="dragAndDropPhotoCaption"
+                          <file-upload-function :albumId="albumId" :caption="dragAndDropPhotoCaption"
                             :onPhotoAdded="handlePhotoAdded" />
                         </photo-frame>
                       </template>
@@ -47,10 +49,8 @@
                       <!-- Default case for regular photos -->
                       <template v-else>
                         <div v-if="isAuthorized">
-                          <TextAreaInput 
-                            v-model="captions[5 * rowIndex + index]" 
-                            placeholder="Enter caption"
-                            :hasError ="false"
+                          <TextAreaInput v-model="captions[5 * rowIndex + index]" placeholder="Enter caption"
+                            :hasError="false"
                             @textChanged="(value) => handleCaptionChange(value, 5 * rowIndex + index)" />
                         </div>
                         <div v-else>{{ captions[5 * rowIndex + index] }}</div>
@@ -58,8 +58,7 @@
                         <photo-frame>
                           <div class="fade-in-animation">
                             <router-link :to="`/photodetails/${photo.photoID}`">
-                              <img :src="imageUrl(photo)" alt=""
-                                style="border: 4px solid white" />
+                              <img :src="imageUrl(photo)" alt="" style="border: 4px solid white" />
                             </router-link>
                           </div>
                         </photo-frame>
@@ -140,8 +139,10 @@
       // Fetch photos on mount
       const fetchPhotos = async () => {
         setLoading(true);
-        const response = await apiClient.getHelper(`${apiAddress.value}/api/photos/album/${albumId.value}`);
-
+        let response = await apiClient.getHelper(`${apiAddress.value}/api/photos/album/${albumId.value}`);
+        if (isAuthorized.value) {
+          response = addDefaultImage(response)
+        }
         photos.value = response;
         captions.value = response.map(p => p.caption);
 
@@ -210,6 +211,11 @@
         return rows;
       });
 
+      const addDefaultImage = (responsePhotos) => {
+          const emptyPhoto = { "photoID": 0, "albumID": albumId.value, "caption": "", "albumCaption":"" };
+          responsePhotos = [...responsePhotos, emptyPhoto];
+          return responsePhotos;
+      };
   
       return {
         albumId,
