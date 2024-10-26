@@ -1,28 +1,46 @@
 <template>
-  <div class="modal-dialog modal-sm modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title h4">
-          <form style="display:inline">
-            <label style="display:inline">
-              <strong>{{ captionText }}</strong>
-              <input v-if="!isAuthorized" 
-                type="password" 
-                v-model="password" 
-                placeholder="Password"
-                style="text-align: center;" />
-            </label>
-          </form>
+  <div
+    class="modal show"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="example-modal-sizes-title-sm"
+    style="display: block; background: rgba(0,0,0,0.5);"
+  >
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <template v-if="!isAuthorized">
+              <label>
+                <strong>{{ captionText }}</strong>
+                <input
+                  type="password"
+                  v-model="password"
+                  placeholder="Password"
+                  class="form-control mt-2"
+                  @keyup.enter="handleLogInOut"
+                />
+              </label>
+            </template>
+            <template v-else>
+              <strong>Log out</strong>
+            </template>
+          </h5>
         </div>
-      </div>
-      <div class="modal-body">
-        <button @click="handleClose" class="btn btn-secondary">Cancel</button>
-        <button @click="handleLogInOut" class="btn btn-primary">
-          {{ isAuthorized ? 'Log Out' : 'Log In' }}
-        </button>
-        <button style="border: none; background: none; color: black;">
-          <FontAwesomeIcon icon="fa-spinner" size="2x" spin :style="{ opacity: loading ? '1' : '0' }" />
-        </button>
+        <div class="modal-body">
+          <button @click="handleClose" class="btn btn-secondary">Cancel</button>
+          <button @click="handleLogInOut" class="btn btn-primary">
+            {{ isAuthorized ? 'Log Out' : 'Log In' }}
+          </button>
+          <button style="border: none; background: none; color: black;">
+            <FontAwesomeIcon
+              icon="fa-spinner"
+              size="2x"
+              spin
+              :style="{ opacity: loading ? '1' : '0' }"
+            />
+          </button>
+        </div>
       </div>
     </div>
   </div>
