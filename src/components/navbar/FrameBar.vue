@@ -137,10 +137,15 @@ const toggleSidebar = ()=> {
   sidebarOpen.value = !sidebarOpen.value;
 }
 
+const closeSidebar = ()=> {
+  sidebarOpen.value = false;
+}
+
 const openShowLoginModal = () => {
   setShowLoginModal(true);
   sidebarOpen.value = false;
-}
+};
+
 </script>
 
 <style>
