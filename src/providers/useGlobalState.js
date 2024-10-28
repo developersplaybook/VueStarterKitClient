@@ -10,6 +10,7 @@ const initialState = {
   apiAddress: process.env.VUE_APP_API_ADDRESS || 'default value',
   isAuthorized: false,
   token: null,
+  showLoginModal: false
 };
 
 // Action types
@@ -17,6 +18,7 @@ export const SET_LOADING = 'SET_LOADING';
 export const SET_APIADDRESS = 'SET_APIADDRESS';
 export const SET_IS_AUTHORIZED = 'SET_IS_AUTHORIZED';
 export const SET_TOKEN = 'SET_TOKEN';
+export const SET_SHOW_LOGIN_MODAL = 'SET_SHOW_LOGIN_MODAL';
 
 // Create the global state and reducer-like function
 export function createGlobalState() {
@@ -36,6 +38,9 @@ export function createGlobalState() {
       case SET_TOKEN:
         state.token = action.payload;
         break;
+      case SET_SHOW_LOGIN_MODAL:
+          state.showLoginModal = action.payload;
+          break;
       default:
         throw new Error(`Unknown action type: ${action.type}`);
     }
@@ -73,6 +78,17 @@ export function useLoading() {
     setLoading: (value) => dispatch({ type: SET_LOADING, payload: value }),
   };
 }
+
+export function useShowLoginModal() {
+  const state = useGlobalState();
+  const dispatch = useGlobalDispatch();
+
+  return {
+    showLoginModal: computed(() => state.showLoginModal),
+    setShowLoginModal: (value) => dispatch({ type: SET_SHOW_LOGIN_MODAL, payload: value }),
+  };
+}
+
 
 export function useApiAddress() {
   const state = useGlobalState();

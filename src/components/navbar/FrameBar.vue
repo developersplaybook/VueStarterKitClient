@@ -55,7 +55,7 @@
               ></a>
             </li>
             <li class="nav-item">
-              <router-link to="/user" class="nav-link no-underline"
+              <router-link to="#" @click="openShowLoginModal" class="nav-link no-underline"
                 ><span></span>&nbsp;<i class="fas fa-user"></i><span></span
               ></router-link>
             </li>
@@ -74,7 +74,7 @@
           ><span></span>&nbsp;&nbsp;<i class="fas fa-map-marker-alt"></i
           ><span></span
         ></a>
-        <router-link to="/user" class="nav-link" @click="closeSidebar"
+        <router-link to="#" @click="openShowLoginModal" class="nav-link"
           ><i class="fas fa-user"></i
         ></router-link>
       </div>
@@ -116,14 +116,18 @@
         &copy; 2024 Vue Starter Kit. All Rights Reserved.
       </div>
     </footer>
+    <LoginOutForm v-if="showLoginModal"/>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import VueSvgIcon from "../common/VueSvgIcon.vue";
+import LoginOutForm from "../user/LoginOutForm.vue";
+import { useShowLoginModal } from '../../providers/useGlobalState';
 
 // Define reactive state
+const { showLoginModal, setShowLoginModal } = useShowLoginModal();
 const logo = require("@/images/info.png");
 const hamburger = require("@/images/Hamburger.png");
 const sidebarOpen = ref(false);
@@ -133,7 +137,8 @@ const toggleSidebar = ()=> {
   sidebarOpen.value = !sidebarOpen.value;
 }
 
-const closeSidebar = () => {
+const openShowLoginModal = () => {
+  setShowLoginModal(true);
   sidebarOpen.value = false;
 }
 </script>

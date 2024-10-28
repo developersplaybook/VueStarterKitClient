@@ -4,7 +4,7 @@
     tabindex="-1"
     role="dialog"
     aria-labelledby="example-modal-sizes-title-sm"
-    style="display: block; background: rgba(0,0,0,0.5);"
+    :style="modalBackgroundStyle"
   >
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -47,9 +47,8 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useIsAuthorized, useLoading, useApiAddress, useToken } from '../../providers/useGlobalState';
-import { useRouter } from 'vue-router';
+import { ref, computed} from 'vue';
+import { useIsAuthorized, useLoading, useApiAddress, useToken, useShowLoginModal } from '../../providers/useGlobalState';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import * as apiClient from '../../helpers/ApiHelpers';
 
@@ -62,13 +61,19 @@ export default {
     const { apiAddress } = useApiAddress();
     const { isAuthorized, setIsAuthorized } = useIsAuthorized();
     const { loading, setLoading } = useLoading();
+    const { showLoginModal, setShowLoginModal } = useShowLoginModal();
     const {setToken} = useToken();
-    const router = useRouter();
     const password = ref('');
     const captionText = ref('Log in');
 
+    const modalBackgroundStyle = computed(() => ({
+      background: showLoginModal.value ? 'rgba(0,0,0,0.5)' : 'none',
+    }));
+
     const handleClose = () => {
-      router.push('/albums');
+      if (showLoginModal) {
+        setShowLoginModal(false);
+      }
     };
 
     const checkPasswordOnServerAsync = async (password) => {
@@ -126,7 +131,8 @@ export default {
       loading,
       handleClose,
       handleLogInOut,
-      captionText
+      captionText,
+      modalBackgroundStyle
     };
   },
 };
