@@ -6,10 +6,10 @@
     aria-labelledby="example-modal-sizes-title-sm"
     :style="modalBackgroundStyle"
   >
-    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-sm">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">
+          <h5 class="modal-title h4">
             <template v-if="!isAuthorized">
               <label>
                 <strong>{{ captionText }}</strong>
