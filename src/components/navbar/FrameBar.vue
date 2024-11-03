@@ -10,7 +10,7 @@
     >
       <div class="container">
         <a class="navbar-brand pb-5 mb-3" href="/">
-          <VueSvgIcon text="Vue Starter Kit" :icon="logo" iconClass="logo" />
+          <VueSvgIcon text="Vue Starter Kit Client" :icon="logo" iconClass="logo" />
         </a>
         <button
           ref="elCollapseButton"

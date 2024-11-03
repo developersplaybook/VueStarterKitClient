@@ -34,7 +34,7 @@ handleAdd<template>
 </template>
 
 <script>
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, watch } from 'vue';
 import * as apiClient from '../helpers/ApiHelpers';
 import { useApiAddress, useIsAuthorized, useLoading, useToken } from '../providers/useGlobalState';
 import AlbumFrame from '../components/albums/AlbumFrame.vue';
@@ -153,6 +153,15 @@ export default {
     const handleCaptionChange = (albumID) => {
       setErrorStates(albumID, false);
     };
+
+    watch(
+      () => isAuthorized.value,
+      async () => {
+        getAlbumsWithPhotoCount();
+      },
+      { immediate: true } // Trigger immediately on component mount
+    );
+
 
     return {
       opacity,

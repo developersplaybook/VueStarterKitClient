@@ -93,7 +93,7 @@
 </template>
   
   <script>
-  import { ref, computed, onMounted } from 'vue';
+  import { ref, computed, onMounted, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import PhotoFrame from '../photos/PhotoFrame.vue';
   import FileUploadFunction from '../photos/FileUploadFunction.vue';
@@ -216,6 +216,14 @@
           responsePhotos = [...responsePhotos, emptyPhoto];
           return responsePhotos;
       };
+
+      watch(
+      () => isAuthorized.value,
+      async () => {
+        await fetchPhotos();
+      },
+      { immediate: true } // Trigger immediately on component mount
+    );
   
       return {
         albumId,
