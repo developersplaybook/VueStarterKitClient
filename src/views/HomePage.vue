@@ -92,7 +92,7 @@
             <div class="col-md-12">
               <div class="panel panel-primary">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Welcom to Vue Starter Kit Client</h3>
+                  <h3 class="panel-title">Welcome to Vue Starter Kit Client</h3>
                 </div>
                 <div class="panel-body">
                   <InfoMessage/>
