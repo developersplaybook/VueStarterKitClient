@@ -93,7 +93,7 @@ export default {
 
         initializeErrorStates(albums.value);
       } catch (error) {
-        console.error('Failed to fetch albums:', error);
+        alert('ServerAPI must be started. Please read the book for info!', error);
       } finally {
         setLoading(false);
       }
