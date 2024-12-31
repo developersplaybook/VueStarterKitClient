@@ -48,7 +48,7 @@
 
 <script>
 import { ref, computed} from 'vue';
-import { useIsAuthorized, useLoading, useApiAddress, useToken, useShowLoginModal } from '../../providers/useGlobalState';
+import { useIsAuthorized, useLoading, useApiAddress, useToken, useShowLoginModal } from '../../store/useGlobalState';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import * as apiClient from '../../helpers/ApiHelpers';
 

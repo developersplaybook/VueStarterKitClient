@@ -47,7 +47,7 @@
 <script>
 import { ref, reactive, computed, watch } from 'vue';
 import * as apiClient from '../helpers/ApiHelpers';
-import { useApiAddress, useToken, useLoading } from '../providers/useGlobalState';
+import { useApiAddress, useToken, useLoading } from '../store/useGlobalState';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 export default {

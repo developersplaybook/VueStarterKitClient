@@ -102,16 +102,6 @@
             <div class="col-md-12">
               <div class="panel panel-primary">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Upcoming features</h3>
-                </div>
-                <div class="panel-body">
-                  <UpcomingFeatures/>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-12">
-              <div class="panel panel-primary">
-                <div class="panel-heading">
                   <h3 class="panel-title">Don't forget to check the other applications</h3>
                 </div>
                 <div class="panel-body">
@@ -128,10 +118,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useApiAddress } from './../providers/useGlobalState';
+import { useApiAddress } from './../store/useGlobalState';
 import PhotoFrame from "../photos/PhotoFrame.vue";
 import InfoMessage from '@/components/common/InfoMessage.vue';
-import UpcomingFeatures from '@/components/common/UpcomingFeatures.vue';
 import OtherApplications from '@/components/common/OtherApplications.vue';
 
 // Access API address from global state

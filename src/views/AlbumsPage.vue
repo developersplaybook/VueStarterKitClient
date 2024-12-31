@@ -36,7 +36,7 @@ handleAdd<template>
 <script>
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import * as apiClient from '../helpers/ApiHelpers';
-import { useApiAddress, useIsAuthorized, useLoading, useToken } from '../providers/useGlobalState';
+import { useApiAddress, useIsAuthorized, useLoading, useToken } from '../store/useGlobalState';
 import AlbumFrame from '../components/albums/AlbumFrame.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 

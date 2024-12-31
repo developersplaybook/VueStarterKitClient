@@ -12,12 +12,10 @@
     <ul :style="{ listStyleImage: 'none', listStyleType: 'disc', paddingLeft: '20px' }">
       <li>Authorization with JSON WebToken</li>
       <li>File upload with drag & drop</li>
-      <li>State Management with React Context API</li>
+      <li>State Management with Vuex</li>
       <li>Storage of passwords and secret keys</li>
       <li>Unobtrusive validation</li>
       <li>SQLite database</li>
-      <li>Server Side Rendering</li>
-      <li>Webpack 5 for module bundling and minification</li>
     </ul>
   </div>
 </template>

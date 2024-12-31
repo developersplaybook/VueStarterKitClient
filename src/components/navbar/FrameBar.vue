@@ -124,7 +124,7 @@
 import { ref } from 'vue';
 import VueSvgIcon from "../common/VueSvgIcon.vue";
 import LoginOutForm from "../user/LoginOutForm.vue";
-import { useShowLoginModal } from '../../providers/useGlobalState';
+import { useShowLoginModal } from '../../store/useGlobalState';
 
 // Define reactive state
 const { showLoginModal, setShowLoginModal } = useShowLoginModal();
